@@ -1,0 +1,12 @@
+langchain
+python-dotenv
+langchain_google_vertexai
+langchain_pinecone
+Streamlit
+streamlit_chat
+datetime
+pytz
+pinecone
+sentence_transformers
+torch
+PyMuPDF
