@@ -10,3 +10,4 @@ pinecone
 sentence_transformers
 torch
 PyMuPDF
+requests

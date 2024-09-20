@@ -1,4 +1,5 @@
 
+import logging
 import json
 from datetime import datetime
 from pytz import timezone
@@ -7,6 +8,7 @@ from langchain_google_vertexai import ChatVertexAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 
+# Interfaces
 from src.components.repository.rate_exchange.interface import IRepository
 
 # Configs
@@ -41,6 +43,7 @@ class RateExchangeRepository(IRepository):
             timezone(config.get("TIMEZONE", "America/Bogota")))
 
     def find_countries(self, question: str) -> str:
+        """Find countries depend constant that show possibilities"""
         prompt_template = (
             f"""
             Cuando un usuario te haga preguntas relacionadas con tasas de cambio entre dos monedas
@@ -55,13 +58,14 @@ class RateExchangeRepository(IRepository):
         return self.conversation.predict(input=prompt_template).strip()
 
     def find_currency_codes(self, predict: str) -> str:
-        print("esta es la prediccion: ",predict)
+        """Find currency codes depend constant"""
+        logging.info("esta es la prediccion: %s",predict)
         currency_dict = json.loads(
             predict[
                 predict.find('{'):(predict.find('}')+1)
             ].replace("'", '"')
         )
-        print(f"currency_dict: {currency_dict}")
+        logging.info("currency_dict: %s",currency_dict)
         country_from_code = get_code_by_country(
             currency_dict["country_from"]
         )
@@ -73,6 +77,7 @@ class RateExchangeRepository(IRepository):
         )
 
     def ask_gemini(self, question: str):
+        """Ask gemini depends api trm"""
         countries_prediction = self.find_countries(question)
         trm = self.find_currency_codes(countries_prediction)
         prompt = (

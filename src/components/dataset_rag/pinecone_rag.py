@@ -1,3 +1,4 @@
+"""Upload data without langchain, directly from Pinecone"""
 import os
 import torch
 from pinecone import Pinecone, ServerlessSpec

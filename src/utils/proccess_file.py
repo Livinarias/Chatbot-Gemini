@@ -1,8 +1,9 @@
+"""This file organice and send tada to RAG"""
 import fitz  # PyMuPDF
 from src.constants.constants import titles
 
 def extract_text_spans(page):
-    """Extrae los spans (fragmentos de texto con propiedades de estilo) de una página."""
+    """Extract spans on this page."""
     blocks = page.get_text("dict")["blocks"]
     spans = []
     for block in blocks:
@@ -13,12 +14,12 @@ def extract_text_spans(page):
 
 
 def is_bold(span):
-    """Determina si un fragmento de texto está en negrita."""
+    """determinate if fragment is bold."""
     return "bold" in span["font"].lower()
 
 
 def process_spans(spans):
-    """Procesa los spans y segmenta el texto por títulos en negrita."""
+    """proccess spam and organice by titles bold."""
     sections = {}
     current_title = None
 
@@ -44,7 +45,7 @@ def process_spans(spans):
 
 
 def segment_text_by_bold_titles(path):
-    """Segmenta el contenido del PDF por títulos en negrita."""
+    """Organice text by bold."""
     doc = fitz.open(path)
     all_sections = {}
 
@@ -57,8 +58,8 @@ def segment_text_by_bold_titles(path):
     return all_sections
 
 
-def modify_key(diccionario, vieja_clave, nueva_clave):
-    return {clave if clave != vieja_clave else nueva_clave: valor for clave, valor in diccionario.items()}
+def modify_key(dict, old_key, new_key):
+    return {clave if clave != old_key else new_key: valor for clave, valor in dict.items()}
 
 def send_data_to_rag(pdf):
     sections = segment_text_by_bold_titles(pdf)

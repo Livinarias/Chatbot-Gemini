@@ -1,3 +1,4 @@
+import logging
 from langchain_google_vertexai import ChatVertexAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
@@ -33,6 +34,7 @@ class ClassificationLLM:
         )
 
     def classify_topic(self, question: str) -> str:
+        """Classify question topic depends posibilities about classification"""
         prompt_classification = (
             f"""
             Clasifica la siguiente pregunta como uno de los siguientes temas:
@@ -48,13 +50,13 @@ class ClassificationLLM:
             """
         )
         classification = self.conversation.predict(input=prompt_classification).strip()
-        print(f"Clasificación: {classification}")
+        logging.info("Clasificación: %s",classification)
         if "money" in classification:
-            print("ingreso al if money")
+            logging.info("ingreso al if money")
             return RateExchangeService(RateExchangeRepository())
         if "rag" in classification:
-            print("ingreso al if rag")
+            logging.info("ingreso al if rag")
             return PineconeRagService(PiceconeRag())
         else:
-            print("ingreso al else")
+            logging.info("ingreso al else")
             return LLMService(LLMRepository())

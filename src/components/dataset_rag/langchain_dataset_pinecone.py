@@ -1,3 +1,4 @@
+"""Organice data and upload data to Pinecone"""
 import os
 from uuid import uuid4
 from pinecone import Pinecone, ServerlessSpec
@@ -27,10 +28,9 @@ def upload_data_to_rag():
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
     vector_store.add_documents(documents=documents, ids=uuids)
     vector_store.delete(ids=[uuids[-1]])
-    print("upload data")
-
 
 def create_index():
+    """Create index to pinecone vector store"""
     pc = Pinecone(api_key=config.get("PINECONE_API_KEY"))
     # Create Index
     index_name = config.get("INDEX_NAME_PINECONE")
@@ -49,11 +49,13 @@ def create_index():
     return pc.Index(index_name)
 
 def find_dataset():
+    """find path to pdf dataset"""
     script_path = os.path.abspath(__file__)
     project_path = os.path.dirname(script_path)
     return os.path.join(project_path, 'dataset_eduLearn.pdf')
 
 def transform_dataset():
+    """Reorganice info depend requirements to pinecone and langchain"""
     pdf_path = find_dataset()
     sentences = [(x["id"], x["text"]) for x in send_data_to_rag(pdf_path)]
     documents = [

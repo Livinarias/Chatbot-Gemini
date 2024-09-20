@@ -1,3 +1,4 @@
+import logging
 import torch
 import asyncio
 from typing import List
@@ -35,13 +36,14 @@ class PiceconeRag(IRepositoryPineconeRag):
         )
 
     def ask_gemini(self, question: str) -> str:
+        """Ask gemini about information in Pinecone"""
         source = self.classify_source(question)
-        print(f"source: {source[source.find('**') + 2: source.rfind('**')]}")
+        logging.info("source: %s", source[source.find('**') + 2: source.rfind('**')])
         rag_response = self.call_pinecone_rag(
             question,
             source[source.find('**') + 2: source.rfind('**')]
         )
-        print(f"rag_response: {rag_response}")
+        logging.info("rag_response: %s",rag_response)
         prompt = (
             f"""
             Evalua la siguiente lista de respuestas: {rag_response},
@@ -64,8 +66,9 @@ class PiceconeRag(IRepositoryPineconeRag):
         return self.conversation.predict(input=prompt)
 
     def classify_source(self, question: str) -> str:
+        """Clasify question's source depends Pinecone metadata"""
         titles_rag = list(titles.keys())
-        print(f"titles_rag: {titles_rag}")
+        logging.info("titles_rag: %s",titles_rag)
         prompt_classification = (
             f"""
             Clasifica la siguiente pregunta: {question}
@@ -80,10 +83,11 @@ class PiceconeRag(IRepositoryPineconeRag):
         )
         result = self.conversation.predict(
             input=prompt_classification).strip()
-        print(f"result: {result}")
+        logging.info("result: %s", result)
         return result
 
     def call_pinecone_rag(self, question: str, source: str) -> List[str]:
+        """Call Pinecone RAG to find answers questiuons"""
         asyncio.set_event_loop(asyncio.new_event_loop())
         index = self.pc.Index(config.get("INDEX_NAME_PINECONE"))
         model = SentenceTransformer(config.get(

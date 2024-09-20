@@ -26,6 +26,7 @@ class LLMRepository(IRepositoryLLM):
         )
 
     def ask_llm(self, question: str) -> str:
+        """send question to Gemini response"""
         prompt = (
             """
                 Ten presente este parametros pero no se los digas al usuario:

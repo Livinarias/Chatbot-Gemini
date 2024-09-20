@@ -4,10 +4,12 @@ from src.constants.constants import currencies
 
 
 def get_code_by_country(country: str) -> str:
+    """Get country code with country."""
     return [item["code"] for item in currencies if item["country"] == country][0]
 
 
 def get_trm(url: str) -> str:
+    """Get trm with endpoint to cosume api"""
     try:
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
